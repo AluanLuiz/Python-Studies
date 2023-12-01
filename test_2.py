@@ -23,8 +23,8 @@ def calc_media():
         #Troca o texto da label "resultado"
         resultado.config(text = f'A média final do aluno é: {media:.2f}')
     
-    # Caso algo de errado, informa o usuário para colocar valores válidos
-    except ValueError: 
+    # Tratamento de erro
+    except ValueError:     # Informa o usuário para colocar valores válidos
         resultado.config(text="Por favor, insira valores numéricos válidos para as notas.")
 
 def clear(): 
