@@ -26,19 +26,3 @@ botao.pack()
 
 # Iniciar o loop principal da interface gráfica
 janela.mainloop()
-
-
-# Informações úteis:
-
-# !-- obs: as palavras em MAIUSCULO abaixo, no código devem ser escritas minusculo --!
-
-# .PACK() : Ajusta o layout
-# SIDE: Define a direção na qual o elemento será exibido, (tk.TOP, tk.BOTTOM, tk.LEFT, tk.RIGHT).
-# ANCHOR: Especifica onde o elemento deve ser ancorado dentro do espaço disponível , ('n', 's', 'e', 'w', 'ne', 'nw', 'se', 'sw', 'center'). 
-# respectivamente (North, South, East, West, Northeast, Northwest, Southeast, Southwest, Center)
-# FILL: Indica como o elemento deve se expandir para preencher o espaço disponível, ('none', 'x', 'y', 'both')
-# EXPAND: Um valor booleano que indica se o elemento deve expandir para ocupar qualquer espaço extra disponível
-# IPADX e IPADY: Adiciona espaço interno ao redor do elemento no eixo x ou y
-# PADX e PADY: Adiciona espaço externo ao redor do elemento no eixo x ou y.
-# BEFORE e AFTER: Controla a posição do elemento em relação a outros elementos já exibidos.
-# IN_ : Especifica o elementro mestre em que o elemento deve ser exibido
