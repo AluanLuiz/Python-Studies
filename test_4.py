@@ -1,5 +1,5 @@
 #2023-12-02
-# Lista de Tarefas
+#Lista de Tarefas
 
 import tkinter as tk 
 from tkinter import messagebox
