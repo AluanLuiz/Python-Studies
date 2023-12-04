@@ -33,7 +33,8 @@ class Lista_Tarefas:
 
         self.btn_finalizar = tk.Button(app, text="Finalizar", command=self.finalizar_task)
         self.btn_finalizar.grid(row=2, column=1, padx=10, pady=10)
-    
+
+        self.atualizar_listbox()
     #------------------------------------------
     
     def criar_tabela(self):
@@ -85,12 +86,24 @@ class Lista_Tarefas:
             self.atualizar_listbox()
 
     #------------------------------------------
-    
+
     def atualizar_listbox(self):
         self.listBox.delete(0, tk.END)
-        for tarefa in self.lista_tarefas:
-            self.listBox.insert(tk.END, tarefa)  
 
+        cursor = self.conexao.cursor()
+        cursor.execute("SELECT tarefa, data_hora FROM lista_tarefas")
+        registros = cursor.fetchall()
+
+        for registro in registros:
+            tarefa_formatada = self.formatar_tarefa(registro)
+            self.lista_tarefas.append(registro)
+            self.listBox.insert(tk.END, tarefa_formatada)
+    
+    #------------------------------------------
+    
+    def formatar_tarefa(self, tarefa):
+        return f"{tarefa[0]}, {tarefa[1]}"\
+            
 # ---------------------------------------------------------------------
 
 app = tk.Tk()
