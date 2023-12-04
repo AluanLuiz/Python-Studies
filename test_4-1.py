@@ -1,17 +1,21 @@
-#2023-12-02
-#Lista de Tarefas
+#2023-12-04
+#Lista de Tarefas com Banco de Dados simples.
 
 import tkinter as tk 
 from tkinter import messagebox
 from datetime import datetime
+import sqlite3 as sql
 
 # ---------------------------------------------------------------------
 
-class ListaTarefas:
+class Lista_Tarefas:
     def __init__(self, app):
         self.app = app
         self.app.geometry("400x300")
         self.app.title("Lista de Tarefas")
+        
+        self.conexao = sql.connect("lista_tarefas.db")
+        self.criar_tabela()
         
         self.lista_tarefas = []
         
@@ -29,7 +33,22 @@ class ListaTarefas:
 
         self.btn_finalizar = tk.Button(app, text="Finalizar", command=self.finalizar_task)
         self.btn_finalizar.grid(row=2, column=1, padx=10, pady=10)
-        
+    
+    #------------------------------------------
+    
+    def criar_tabela(self):
+        cursor = self.conexao.cursor()
+        cursor.execute('''
+                CREATE TABLE IF NOT EXISTS lista_tarefas (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    tarefa TEXT NOT NULL,
+                    data_hora TEXT NOT NULL
+                )
+            ''')
+        self.conexao.commit()
+     
+    #------------------------------------------
+       
     def adicionar_task(self):
         tarefa = self.task_desc.get()
         if tarefa:
@@ -37,11 +56,17 @@ class ListaTarefas:
             tarefa_com_data = f"{tarefa} ({data_hora_atual})"
             self.lista_tarefas.append(tarefa_com_data)
 
+            cursor = self.conexao.cursor()
+            cursor.execute("INSERT INTO lista_tarefas (tarefa, data_hora) VALUES (?, ?)", (tarefa, data_hora_atual))
+            self.conexao.commit()
+            
             self.atualizar_listbox()
             self.task_desc.delete(0, tk.END)
         else:
             messagebox.showwarning("Aviso", "Digite uma tarefa para adicionar.")
 
+    #------------------------------------------
+    
     def deletar_task(self):
         selecionado = self.listBox.curselection()
         if selecionado:
@@ -49,6 +74,8 @@ class ListaTarefas:
             del self.lista_tarefas[index]
             self.atualizar_listbox()
 
+    #------------------------------------------
+    
     def finalizar_task(self):
         selecionado = self.listBox.curselection()
         if selecionado:
@@ -57,6 +84,8 @@ class ListaTarefas:
             self.lista_tarefas.append(f"{tarefa_concluida} - Concluída")
             self.atualizar_listbox()
 
+    #------------------------------------------
+    
     def atualizar_listbox(self):
         self.listBox.delete(0, tk.END)
         for tarefa in self.lista_tarefas:
@@ -65,6 +94,6 @@ class ListaTarefas:
 # ---------------------------------------------------------------------
 
 app = tk.Tk()
-Jan = ListaTarefas(app)
+Jan = Lista_Tarefas(app)
 
 app.mainloop()
