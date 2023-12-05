@@ -67,7 +67,7 @@ class Lista_Tarefas:
             messagebox.showwarning("Aviso", "Digite uma tarefa para adicionar.")
 
     #------------------------------------------
-    
+    #! Integrar ao BD, Função Delete
     def deletar_task(self):
         selecionado = self.listBox.curselection()
         if selecionado:
@@ -76,7 +76,7 @@ class Lista_Tarefas:
             self.atualizar_listbox()
 
     #------------------------------------------
-    
+    #! Integrar ao BD, Atualizar o item selecionado
     def finalizar_task(self):
         selecionado = self.listBox.curselection()
         if selecionado:
