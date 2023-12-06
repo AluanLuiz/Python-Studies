@@ -14,3 +14,18 @@
 
 ---------------------------------------
 
+Comandos SQLite: "desconsidere as <>"
+
+    < CREATE DATABASE nome_do_banco; > - "Cria um Banco de Dados";
+    < USE nome_do_banco; > - "Define qual BD irá usar";
+    < CREATE TABLE nome_da_tabela (
+                id INTEGER PRIMARY KEY,
+                coluna1 TIPO1,
+                coluna2 TIPO2,
+                ...); > - "Cria uma tabela";
+    INSERT INTO nome_da_tabela (coluna1, coluna2, ...) VALUES (valor1, valor2, ...); - "Inserir Dados a uma tabela";
+    SELECT * FROM nome_da_tabela WHERE condicao; - "Consulta uma tabela";
+    < UPDATE nome_da_tabela
+    SET coluna1 = valor1, coluna2 = valor2
+    WHERE condicao; > - "Atualiza os dados da tabela";
+    < DELETE FROM nome_da_tabela WHERE condicao; > - "Exluir dados";
