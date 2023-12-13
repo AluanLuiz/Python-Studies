@@ -4,6 +4,7 @@
 import tkinter as tk
 from tkinter import messagebox
 from tkinter import font
+from tkinter import simpledialog
 import sqlite3 as sql
 #import os "Ative se quiser verificar pelo terminal o reload -1"
 
@@ -29,18 +30,15 @@ class ControleEstoque:
         self.title.grid(row=0, column=1, columnspan=2, pady=10)
 
         self.bt_cadProdut = tk.Button(master, text="Cadastrar Produto", font=self.font_2, command=self.forms_CadProd)
-        self.bt_cadProdut.grid(row=1, column=0, columnspan=2, padx=10, pady=10)
-
-        self.bt_volVendas = tk.Button(master, text="Volume de Vendas", font=self.font_2, command=self.grafic_vendas)
-        self.bt_volVendas.grid(row=1, column=2, columnspan=2, padx=10, pady=10)
+        self.bt_cadProdut.grid(row=0, column=3, columnspan=2, padx=10, pady=10)
 
         self.listViewer = tk.Listbox(master, selectmode=tk.MULTIPLE, height=20, width=88, font=self.font_3)
-        self.listViewer.grid(row=2, column=1, columnspan=3, padx=15, pady=10)
+        self.listViewer.grid(row=1, column=1, columnspan=3, padx=15, pady=10)
 
-        self.bt_reload = tk.Button(master, text="Atualizar  ", font=self.font_2, command=self.load_listview)
-        self.bt_reload.grid(row=3, column=2, pady=10)
+        # self.bt_reload = tk.Button(master, text="Atualizar  ", font=self.font_2, command=self.load_listview)
+        # self.bt_reload.grid(row=2, column=2, pady=10)
         self.bt_darBaixa = tk.Button(master, text="Dar Baixa", font=self.font_2, command=self.saidaProdut)
-        self.bt_darBaixa.grid(row=3, column=3, pady=10)
+        self.bt_darBaixa.grid(row=2, column=3, pady=10)
         
         self.load_listview()
           
@@ -48,18 +46,16 @@ class ControleEstoque:
     
     def forms_CadProd(self):
         cad_produt = tk.Toplevel(self.master)
-        cadProdut_Forms = CadastroProduto(cad_produt)
-
-    #------------------------------------------
-    
-    def grafic_vendas(self):
-        print(f"Botão funcionando 2")
+        CadastroProduto(cad_produt)
 
     #------------------------------------------
     
     def saidaProdut(self):
-        print(f"Botão funcionando 3")
-                
+        produt_id = self.obter_codBarras() 
+        # OR - produt_id = self.obter_id()
+        baixa_estoque = tk.Toplevel(self.master)
+        BaixaEstoque(baixa_estoque, produt_id)
+    
     #------------------------------------------
     
     def load_listview(self):
@@ -103,13 +99,125 @@ class ControleEstoque:
                         )
                     ''')
         self.conexao.commit()
-
     #------------------------------------------
-  
-    # def clear_terminal(self): Utíl para manutenção e/ou verificação do banco -1
+    
+    def obter_id(self):  #Obtem o id único do banco de dados
+        selecionados = self.listViewer.curselection()
+        
+        if selecionados:
+            index = selecionados[0]
+            produt_selecionado = self.listViewer.get(index).split(", ")[0]
+
+            cursor = self.conexao.cursor()
+            cursor.execute("SELECT id FROM estoque WHERE id = ?", (produt_selecionado,))
+            tarefa_id = cursor.fetchone()
+
+            if tarefa_id:
+                return tarefa_id[0]
+            else:
+                print(f"Produto selecionado: {produt_selecionado}")
+                print("ID não encontrado no banco de dados.")
+                return None
+        else:
+            print("Nenhum item selecionado.")
+            return None
+    
+    def obter_codBarras(self): # Obtem o código de barras do produto no banco de dados, como se tivesse usado o leitor físico
+        selecionados = self.listViewer.curselection()
+
+        if selecionados:
+            index = selecionados[0]
+            # ↓ Isolando o código de barras da string selecionada da listViewer.
+            codbarras = self.listViewer.get(index).split(", ")[1]  # Obtem do index a string após a ,
+            produt_selecionado = codbarras.split(" - ")[0] # Isola o código de barras da string que está antes do -
+
+            cursor = self.conexao.cursor()
+            cursor.execute("SELECT cod_barras FROM estoque WHERE cod_barras = ?", (produt_selecionado,))
+            tarefa_codBarras = cursor.fetchone()
+
+            if tarefa_codBarras:
+                return tarefa_codBarras[0]
+            else:
+                print(f"Produto selecionado: {produt_selecionado}")
+                print("Código de barras não encontrado no banco de dados.")
+                return None
+        else:
+            print("Nenhum item selecionado.")
+            return None
+        
+    #------------------------------------------
+    # Utíl para manutenção e/ou verificação do banco -1
+    # def clear_terminal(self): -1
     #     os.system('cls' if os.name == 'nt' else 'clear') -1
     
 #- Fim da classe ControleEstoque -----------------------------------------
+
+#- Início da classe BaixaEstoque -----------------------------------------
+class BaixaEstoque:
+    def __init__(self, baixa, produt_id):   
+        self.baixa = baixa
+        self.baixa.geometry("430x350")
+        self.baixa.title("Cadastro de Produto")
+      
+        self.produto = produt_id
+       
+        self.conexao = sql.connect("armazem.db")
+        self.infoProdut() 
+        
+        self.font_1 = font.Font(family="Arial", size=16)
+        self.font_2 = font.Font(family="Arial", size=14)
+
+        self.lbl_nomeProd = tk.Label(baixa, text="Nome_Produto", font=self.font_1)
+        self.lbl_nomeProd.grid(row=0, column=0, padx=10, pady=10)
+        self.lbl_codBar = tk.Label(baixa, text="Código de barras", font=self.font_1)
+        self.lbl_codBar.grid(row=1, column=0, padx=10, pady=10)
+        self.lbl_fornecedor = tk.Label(baixa, text="Fornecedor", font=self.font_1)
+        self.lbl_fornecedor.grid(row=2, column=0, padx=10, pady=10)
+        self.lbl_quant = tk.Label(baixa, text="Quantidadi disponível", font=self.font_2)
+        self.lbl_quant.grid(row=3, column=0, padx=10, pady=10)
+        
+        self.btn_subtrair = tk.Button(baixa, text="-", font=self.font_2, command=self.subtrair_quantidade)
+        self.btn_subtrair.grid(row=4, column=0, padx=10, pady=10)
+
+        self.btn_adicionar = tk.Button(baixa, text="+", font=self.font_2, command=self.adicionar_quantidade)
+        self.btn_adicionar.grid(row=4, column=1, padx=10, pady=10)
+
+        self.btn_confirmar = tk.Button(baixa, text="Confirmar", font=self.font_2, command=self.confirmar_baixa)
+        self.btn_confirmar.grid(row=5, column=0, columnspan=2, padx=10, pady=10)     
+
+    def subtrair_quantidade(self):
+        # Lógica para subtrair uma unidade
+        pass
+
+    def adicionar_quantidade(self):
+        # Lógica para adicionar uma unidade
+        pass
+
+    def confirmar_baixa(self):
+        pass
+
+    def infoProdut(self):
+        cursor = self.conexao.cursor()
+        cursor.execute("SELECT nome_produto, cod_barras, fornecedor, quant_dispon FROM estoque WHERE cod_barras = ?", (self.produto,))
+        registro = cursor.fetchone()
+        
+        if registro:
+            nome_produto, cod_barras, fornecedor, quant_dispon = registro
+            
+            print(f"Nome do Produto: {nome_produto}")
+            print(f"Código de Barras: {cod_barras}")
+            print(f"Fornecedor: {fornecedor}")
+            print(f"Quantidade Disponível: {quant_dispon}")
+            
+            self.lbl_nomeProd.config(text=f"Nome do Produto: {nome_produto}")
+            self.lbl_codBar.config(text=f"{cod_barras}")
+            self.lbl_fornecedor.config(text=f"Fornecedor: {fornecedor}")
+            self.lbl_quant.config(text=f"{quant_dispon}")
+
+        else:
+             messagebox.showwarning("Produto não encontrado", "O produto não foi encontrado no estoque.")
+
+#- Fim da classe BaixaEstoque -----------------------------------------
 
 #- Início da classe CadastroProduto -----------------------------------------
 
@@ -267,5 +375,5 @@ class CadastroProduto:
 if __name__ == "__main__":
     root = tk.Tk()
     app = ControleEstoque(root)
-    root.geometry("650x530")
+    root.geometry("650x500")
     root.mainloop()
