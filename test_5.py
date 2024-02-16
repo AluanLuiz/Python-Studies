@@ -1,4 +1,5 @@
 #2023-12-06
+#Finalizado em 2024-02-16
 #Controle de Estoque, com bd
 
 import tkinter as tk
