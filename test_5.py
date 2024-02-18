@@ -102,26 +102,26 @@ class ControleEstoque:
         self.conexao.commit()
     #------------------------------------------
 
-    def obter_id(self):  #Obtem o id único do banco de dados
-        selecionados = self.listViewer.curselection()
+    # def obter_id(self):  #Obtem o id único do banco de dados
+    #     selecionados = self.listViewer.curselection()
 
-        if selecionados:
-            index = selecionados[0]
-            produt_selecionado = self.listViewer.get(index).split(", ")[0]
+    #     if selecionados:
+    #         index = selecionados[0]
+    #         produt_selecionado = self.listViewer.get(index).split(", ")[0]
 
-            cursor = self.conexao.cursor()
-            cursor.execute("SELECT id FROM estoque WHERE id = ?", (produt_selecionado,))
-            tarefa_id = cursor.fetchone()
+    #         cursor = self.conexao.cursor()
+    #         cursor.execute("SELECT id FROM estoque WHERE id = ?", (produt_selecionado,))
+    #         tarefa_id = cursor.fetchone()
 
-            if tarefa_id:
-                return tarefa_id[0]
-            else:
-                print(f"Produto selecionado: {produt_selecionado}")
-                print("ID não encontrado no banco de dados.")
-                return None
-        else:
-            print("Nenhum item selecionado.")
-            return None
+    #         if tarefa_id:
+    #             return tarefa_id[0]
+    #         else:
+    #             print(f"Produto selecionado: {produt_selecionado}")
+    #             print("ID não encontrado no banco de dados.")
+    #             return None
+    #     else:
+    #         print("Nenhum item selecionado.")
+    #         return None
 
     def obter_codBarras(self): # Obtem o código de barras do produto no banco de dados, como se tivesse usado o leitor físico
         selecionados = self.listViewer.curselection()
@@ -203,6 +203,7 @@ class BaixaEstoque:
                 self.baixa.destroy()
         else:
             messagebox.showwarning("Seleção Inválida", "Selecione uma quantidade válida para retirar.")
+            self.baixa.destroy()
 
     #------------------------------------------
 
@@ -304,6 +305,9 @@ class CadastroProduto:
                 self.txt_valorVenda.delete(0, tk.END)
                 self.txt_fornecedor.delete(0, tk.END)
                 self.txt_valorFornec.delete(0, tk.END)
+                
+                self.cad.destroy()
+                
             except sql.Error as e:
                 print("Erro ao salvar o cadastro do produto:", e)
                 messagebox.showerror("Erro", "Não foi possível salvar o cadastro do produto")
