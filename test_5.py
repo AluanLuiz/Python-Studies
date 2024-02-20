@@ -203,6 +203,7 @@ class BaixaEstoque:
                 self.baixa.destroy()
         else:
             messagebox.showwarning("Seleção Inválida", "Selecione uma quantidade válida para retirar.")
+            cursor.close() 
             self.baixa.destroy()
 
     #------------------------------------------
@@ -226,7 +227,8 @@ class BaixaEstoque:
         
         else:
             messagebox.showwarning("Produto não encontrado", "O produto não foi encontrado no estoque.")
-
+            cursor.close()
+            self.baixa.destroy()
     #------------------------------------------
     
 #- Fim da classe BaixaEstoque -----------------------------------------
@@ -307,8 +309,9 @@ class CadastroProduto:
                 self.txt_valorFornec.delete(0, tk.END)
                 
                 self.cad.destroy()
-                
+                cursor.close()
             except sql.Error as e:
+                cursor.close()
                 print("Erro ao salvar o cadastro do produto:", e)
                 messagebox.showerror("Erro", "Não foi possível salvar o cadastro do produto")
 
