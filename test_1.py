@@ -7,8 +7,8 @@ import random as rd     #importando a biblioteca de sorteio
 #Definindo a função "click_btn"
 def click_btn():
     list = [] #lista vazia
-    for i in range(0,6): # repetindo 6 vezes
-        num = rd.randint(0,60) # sortea um número de 0 a 60
+    for i in range(0,4): # repetindo 6 vezes
+        num = rd.randint(0,9) # sortea um número de 0 a 60
         list.append(num) # adiciona esse número a lista vazia
     label1.config(text = list)   #exibe o resustado final com os 6 números salvos dentro da lista
     
